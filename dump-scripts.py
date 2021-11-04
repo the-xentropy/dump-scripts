@@ -43,9 +43,9 @@ if __name__ == "__main__":
     soup = bs(res.text,features="html.parser")
     for script in soup.find_all("script"):
         if "src" in script.attrs:
-            pass
             #externally loaded script
-            print(f'Downloaded {download_script(script.attrs["src"],downloads_path)}')
+            download_url = requests.compat.urljoin(args.url, script.attrs["src"])
+            print(f'Downloaded {download_script(download_url,downloads_path)}')
         else:
             #inline script
             print(script.text)
