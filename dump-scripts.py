@@ -12,7 +12,7 @@ By: @SamuelAnttila
 License: MIT
 """
 
-def download_script(url,downloads_dir_path):
+def download_script(url,downloads_dir_path,headers={}):
     """Download script into given directory. Note: Does nothing to avoid name collisions"""
 
     # /asdf/file.js?123=123 -> file.js
@@ -20,7 +20,7 @@ def download_script(url,downloads_dir_path):
     local_filename = os.path.basename(url_path)
 
     # streaming file download because putting everything in memory at once is silly
-    with requests.get(url, stream=True) as r:
+    with requests.get(url, stream=True, headers={}) as r:
         r.raise_for_status()
         with open(os.path.join(downloads_dir_path,local_filename), 'wb+') as f:
             for chunk in r.iter_content(chunk_size=8192):
@@ -54,7 +54,7 @@ if __name__ == "__main__":
         if "src" in script.attrs:
             #externally loaded script
             download_url = requests.compat.urljoin(args.url, script.attrs["src"])
-            print(f'Downloaded {download_script(download_url,downloads_path)}')
+            print(f'Downloaded {download_script(download_url,downloads_path,headers={"User-Agent":args.useragent})}')
         else:
             #inline script
             print(script.text)
