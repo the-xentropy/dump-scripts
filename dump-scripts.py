@@ -6,11 +6,20 @@ import hashlib
 import argparse
 
 
-"""Simple python utility to dump all scripts from a given page."""
+"""
+Simple python utility to dump all scripts from a given page.
+By: @SamuelAnttila
+License: MIT
+"""
 
 def download_script(url,downloads_dir_path):
     """Download script into given directory. Note: Does nothing to avoid name collisions"""
-    local_filename = url.split("/")[-1]
+
+    # /asdf/file.js?123=123 -> file.js
+    url_path = requests.compat.urlparse(url).path
+    local_filename = os.path.basename(url_path)
+
+    # streaming file download because putting everything in memory at once is silly
     with requests.get(url, stream=True) as r:
         r.raise_for_status()
         with open(os.path.join(downloads_dir_path,local_filename), 'wb+') as f:
